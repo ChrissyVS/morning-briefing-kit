@@ -1,0 +1,23 @@
+# Who the briefing is for. Claude reads all of this every morning.
+# The /morning-briefing setup in Claude fills this in for you; you can also edit it by hand.
+listener:
+  name: Alex
+  about: Works in tech in Europe and wants to start the day knowing what matters.
+  interests:
+    - The most important world news
+    - Tech, AI and startups
+  skip:
+    - Celebrity gossip and sports
+
+language: English       # the briefing's language, e.g. English or German
+length_minutes: 5       # the maximum; quiet days come out shorter
+timezone: Europe/Berlin # your time zone (decides "today" and the weekday)
+model: claude-opus-5-5  # the Claude model that picks the stories and writes the script
+
+voice:
+  voice_id: ""          # run `python briefing.py --voices` and paste one here
+  model: eleven_multilingual_v2
+  speed: 1.0            # 0.7 (slower) to 1.2 (faster)
+  # Lifts the highs after the voice is made, for cloned voices that come out too dark.
+  # 0 = off. Try 2 to 5 for a clone, then test with --sample.
+  brighter: 0

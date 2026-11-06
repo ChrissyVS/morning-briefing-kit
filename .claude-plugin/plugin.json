@@ -1,0 +1,10 @@
+{
+  "name": "morning-briefing",
+  "version": "0.1.0",
+  "description": "Wake up to your own spoken news briefing: the biggest stories of the last day from the sources you choose, written by Claude and read in an ElevenLabs voice you pick (even your own). Claude sets everything up with you step by step: your sources, your voice, a free daily run on GitHub, and an iPhone app with a real alarm. Uses your own Claude and ElevenLabs accounts.",
+  "author": {
+    "name": "Christina Vogt-Sasse"
+  },
+  "license": "MIT",
+  "keywords": ["morning briefing", "news", "alarm", "podcast", "elevenlabs", "text to speech", "iphone"]
+}

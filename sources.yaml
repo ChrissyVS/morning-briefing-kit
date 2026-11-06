@@ -1,0 +1,16 @@
+# The websites and feeds your briefing reads. The /morning-briefing setup in Claude
+# fills this in for you; to change it later, just tell Claude ("add Handelsblatt").
+# url can be a homepage or an RSS feed. active: false pauses a source.
+- name: BBC World
+  url: https://feeds.bbci.co.uk/news/world/rss.xml
+  priority: High
+  focus: Only the biggest world stories
+- name: The Guardian
+  url: https://www.theguardian.com/world/rss
+  focus: World news
+- name: TechCrunch
+  url: https://techcrunch.com
+  focus: Big funding rounds, AI and tech
+- name: Hacker News
+  url: https://hnrss.org/frontpage?points=300
+  active: false

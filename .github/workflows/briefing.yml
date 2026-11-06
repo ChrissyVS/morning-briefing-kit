@@ -1,0 +1,79 @@
+# Makes the briefing every morning and puts the mp3 on the `audio` branch,
+# where the iPhone Shortcut downloads it.
+name: Morning briefing
+
+on:
+  schedule:
+    # GitHub runs on UTC and sometimes delays or skips scheduled runs, so it tries every
+    # 15 minutes in the hours before you wake up. The first try makes the briefing; the
+    # others see it's done and stop after a few seconds. The setup in Claude sets these
+    # hours to fit your wake-up time. Default: 03:00–05:45 UTC (4:00–6:45 in Berlin in winter).
+    - cron: "*/15 3-5 * * *"
+  workflow_dispatch: # the "Run workflow" button, for testing
+
+permissions:
+  contents: write
+
+concurrency:
+  group: briefing
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Already made today?
+        id: check
+        run: |
+          tz=$(sed -n 's/^timezone: *\([^ #]*\).*/\1/p' config.yaml); tz=${tz:-Europe/Berlin}
+          today=$(TZ="$tz" date +%F)
+          echo "today=$today" >> "$GITHUB_OUTPUT"
+          made=$(git fetch -q --depth=1 origin audio 2>/dev/null && git show FETCH_HEAD:date.txt 2>/dev/null || true)
+          if [ "$made" = "$today" ] && [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "Today's briefing already exists."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+          # The last briefing, so today's doesn't repeat it and only looks back to when it was made.
+          mkdir -p out
+          git show FETCH_HEAD:latest.txt > out/previous.txt 2>/dev/null || rm -f out/previous.txt
+          git show FETCH_HEAD:made-at.txt > out/previous-made-at.txt 2>/dev/null || rm -f out/previous-made-at.txt
+
+      - uses: actions/setup-python@v5
+        if: steps.check.outputs.skip != 'true'
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Make the briefing
+        if: steps.check.outputs.skip != 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_SOURCES_DB: ${{ secrets.NOTION_SOURCES_DB }}
+        run: |
+          command -v ffmpeg >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+          pip install -q -r requirements.txt
+          python briefing.py
+
+      - name: Publish to the audio branch
+        if: steps.check.outputs.skip != 'true'
+        env:
+          TODAY: ${{ steps.check.outputs.today }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir publish && cd publish
+          cp ../out/latest.mp3 latest.mp3
+          cp "../out/briefing-$TODAY.txt" latest.txt
+          echo "$TODAY" > date.txt
+          cp ../out/made-at.txt made-at.txt
+          git init -q -b audio
+          git add .
+          git -c user.name="Morning Briefing" -c user.email="actions@github.com" commit -qm "Briefing $TODAY"
+          # One commit, replaced every day, so the repo never grows.
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" audio
+          echo "Published the briefing for $TODAY."

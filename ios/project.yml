@@ -1,0 +1,34 @@
+# Generates MorningBriefing.xcodeproj:  cd ios && xcodegen
+name: MorningBriefing
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+targets:
+  MorningBriefing:
+    type: application
+    platform: iOS
+    sources:
+      - MorningBriefing
+    info:
+      path: MorningBriefing/Info.plist
+      properties:
+        CFBundleDisplayName: Briefing
+        UILaunchScreen:
+          UIColorName: ""
+        UIBackgroundModes: [audio]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSAlarmKitUsageDescription: "Briefing sets your wake-up alarm. When you stop it, your morning briefing starts."
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.morningbriefing   # the setup makes this your own
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""   # your Personal Team; the setup fills it in

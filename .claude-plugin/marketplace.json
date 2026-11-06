@@ -1,0 +1,16 @@
+{
+  "name": "morning-briefing",
+  "owner": {
+    "name": "Christina Vogt-Sasse"
+  },
+  "metadata": {
+    "description": "Morning Briefing: wake up to your own spoken news briefing."
+  },
+  "plugins": [
+    {
+      "name": "morning-briefing",
+      "source": "./",
+      "description": "Your news, your voice, your alarm. Claude sets it up with you step by step."
+    }
+  ]
+}
