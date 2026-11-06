@@ -340,7 +340,8 @@ def split_for_tts(text: str, limit: int = TTS_CHUNK_CHARS) -> list[str]:
 def speak(cfg: dict, script: str, path: Path) -> None:
     voice = cfg["voice"]
     if not voice.get("voice_id"):
-        sys.exit("No voice chosen yet: run `python briefing.py --voices` and put one in config.yaml.")
+        sys.exit("No voice chosen yet: ask Claude to pick a voice with you (/morning-briefing), "
+                 "or put a voice_id from ElevenLabs into config.yaml.")
     model = voice.get("model", "eleven_multilingual_v2")
     chunks = split_for_tts(script)
     parts: list[bytes] = []
