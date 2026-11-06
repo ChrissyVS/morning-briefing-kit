@@ -19,6 +19,8 @@ concurrency:
 
 jobs:
   briefing:
+    # Never runs in the template itself, only in your own copy of it.
+    if: github.repository != 'ChrissyVS/morning-briefing-kit'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
